@@ -291,7 +291,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--ms_rate', type=int, default=1, help='higher ms rate results in less aliased output. MESA renderer only supports ms_rate=1.')
     parser.add_argument('-e', '--egl',  action='store_true', help='egl rendering option. use this when rendering with headless server with NVIDIA GPU')
     parser.add_argument('-s', '--size',  type=int, default=512, help='rendering image size')
-    parser.add_argument('-s', '--env', type=str, default='./env_sh.npy', help='env dir')
+    parser.add_argument('-v', '--env', type=str, default='./env_sh.npy', help='env dir')
     args = parser.parse_args()
 
     shs = np.load(args.env)
