@@ -152,10 +152,28 @@ def render_prt_ortho(out_path, folder_name, subject_name, shs, rndr, rndr_uv, im
     cam.sanity_check()
 
     # set path for obj, prt
+    # mesh_file = os.path.join(folder_name, subject_name + '_100k.obj')
+    # if not os.path.exists(mesh_file):
+    #     print('ERROR: obj file does not exist!!', mesh_file)
+    #     return
+    # prt_file = os.path.join(folder_name, 'bounce', 'bounce0.txt')
+    # if not os.path.exists(prt_file):
+    #     print('ERROR: prt file does not exist!!!', prt_file)
+    #     return
+    # face_prt_file = os.path.join(folder_name, 'bounce', 'face.npy')
+    # if not os.path.exists(face_prt_file):
+    #     print('ERROR: face prt file does not exist!!!', prt_file)
+    #     return
+    # text_file = os.path.join(folder_name, 'tex', subject_name + '_dif_2k.jpg')
+    # if not os.path.exists(text_file):
+    #     print('ERROR: dif file does not exist!!', text_file)
+    #     return
+
+    # set own path for obj, prt
     mesh_file = os.path.join(folder_name, subject_name + '_100k.obj')
     if not os.path.exists(mesh_file):
         print('ERROR: obj file does not exist!!', mesh_file)
-        return 
+        return
     prt_file = os.path.join(folder_name, 'bounce', 'bounce0.txt')
     if not os.path.exists(prt_file):
         print('ERROR: prt file does not exist!!!', prt_file)
@@ -164,12 +182,12 @@ def render_prt_ortho(out_path, folder_name, subject_name, shs, rndr, rndr_uv, im
     if not os.path.exists(face_prt_file):
         print('ERROR: face prt file does not exist!!!', prt_file)
         return
-    text_file = os.path.join(folder_name, 'tex', subject_name + '_dif_2k.jpg')
+    text_file = os.path.join(folder_name, 'tex', subject_name + '_dif_8k.jpg')
     if not os.path.exists(text_file):
         print('ERROR: dif file does not exist!!', text_file)
-        return             
+        return
 
-    texture_image = cv2.imread(text_file)
+texture_image = cv2.imread(text_file)
     texture_image = cv2.cvtColor(texture_image, cv2.COLOR_BGR2RGB)
 
     vertices, faces, normals, faces_normals, textures, face_textures = load_obj_mesh(mesh_file, with_normal=True, with_texture=True)
@@ -266,16 +284,17 @@ def render_prt_ortho(out_path, folder_name, subject_name, shs, rndr, rndr_uv, im
 
 
 if __name__ == '__main__':
-    shs = np.load('./env_sh.npy')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input', type=str, default='/home/shunsuke/Downloads/rp_dennis_posed_004_OBJ')
-    parser.add_argument('-o', '--out_dir', type=str, default='/home/shunsuke/Documents/hf_human')
+    parser.add_argument('-i', '--input', type=str, default='/hd4/renderpeople/models/prt_data/rp_fernanda_posed_001')
+    parser.add_argument('-o', '--out_dir', type=str, default='/hd4/renderpeople/models/imgs_data')
     parser.add_argument('-m', '--ms_rate', type=int, default=1, help='higher ms rate results in less aliased output. MESA renderer only supports ms_rate=1.')
     parser.add_argument('-e', '--egl',  action='store_true', help='egl rendering option. use this when rendering with headless server with NVIDIA GPU')
     parser.add_argument('-s', '--size',  type=int, default=512, help='rendering image size')
+    parser.add_argument('-s', '--env', type=str, default='./env_sh.npy', help='env dir')
     args = parser.parse_args()
 
+    shs = np.load(args.env)
     # NOTE: GL context has to be created before any other OpenGL function loads.
     from lib.renderer.gl.init_gl import initialize_GL_context
     initialize_GL_context(width=args.size, height=args.size, egl=args.egl)
@@ -286,5 +305,6 @@ if __name__ == '__main__':
 
     if args.input[-1] == '/':
         args.input = args.input[:-1]
-    subject_name = args.input.split('/')[-1][:-4]
+    subject_name = args.input.split('/')[-1]
+    print(args.out_dir, args.input, subject_name)
     render_prt_ortho(args.out_dir, args.input, subject_name, shs, rndr, rndr_uv, args.size, 1, 1, pitch=[0])
