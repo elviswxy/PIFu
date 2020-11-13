@@ -145,6 +145,7 @@ def rotateBand2(x, R):
     return dst
 
 def render_prt_ortho(out_path, folder_name, subject_name, shs, rndr, rndr_uv, im_size, angl_step=4, n_light=1, pitch=[0]):
+    print(out_path, folder_name, subject_name)
     cam = Camera(width=im_size, height=im_size)
     cam.ortho_ratio = 0.4 * (512 / im_size)
     cam.near = -100
@@ -306,6 +307,6 @@ if __name__ == '__main__':
     if args.input[-1] == '/':
         args.input = args.input[:-1]
     subject_name = args.input.split('/')[-1]
-    print(args.out_dir, args.input, subject_name)
-    new_out_dir = os.makedirs(os.path.join(args.out_dir, subject_name), exist_ok=True)
+    new_out_dir = os.path.join(args.out_dir, subject_name)
+    os.makedirs(new_out_dir, exist_ok=True)
     render_prt_ortho(new_out_dir, args.input, subject_name, shs, rndr, rndr_uv, args.size, 1, 1, pitch=[0])
