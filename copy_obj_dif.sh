@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 file_list=$(ls /hd4/renderpeople/models/prt_data)
-for file in ${file}_list
+for file in $file_list
 do
 		if [ ! -f "/hd4/renderpeople/models/unzip_models/${file}_MAYA/${file}_MAYA/scenes/${file}_100k.obj" ]
 		then
