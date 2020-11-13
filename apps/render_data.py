@@ -187,7 +187,7 @@ def render_prt_ortho(out_path, folder_name, subject_name, shs, rndr, rndr_uv, im
         print('ERROR: dif file does not exist!!', text_file)
         return
 
-texture_image = cv2.imread(text_file)
+    texture_image = cv2.imread(text_file)
     texture_image = cv2.cvtColor(texture_image, cv2.COLOR_BGR2RGB)
 
     vertices, faces, normals, faces_normals, textures, face_textures = load_obj_mesh(mesh_file, with_normal=True, with_texture=True)
