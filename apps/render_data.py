@@ -182,7 +182,7 @@ def render_prt_ortho(out_path, folder_name, subject_name, shs, rndr, rndr_uv, im
     if not os.path.exists(face_prt_file):
         print('ERROR: face prt file does not exist!!!', prt_file)
         return
-    text_file = os.path.join(folder_name, 'tex', subject_name + '_dif_8k.jpg')
+    text_file = os.path.join(folder_name, subject_name + '_dif_8k.jpg')
     if not os.path.exists(text_file):
         print('ERROR: dif file does not exist!!', text_file)
         return
@@ -286,7 +286,7 @@ texture_image = cv2.imread(text_file)
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input', type=str, default='/hd4/renderpeople/models/prt_data/rp_fernanda_posed_001')
+    parser.add_argument('-i', '--input', type=str, default='/hd4/renderpeople/models/prt_data/rp_rosy_posed_014')
     parser.add_argument('-o', '--out_dir', type=str, default='/hd4/renderpeople/models/imgs_data')
     parser.add_argument('-m', '--ms_rate', type=int, default=1, help='higher ms rate results in less aliased output. MESA renderer only supports ms_rate=1.')
     parser.add_argument('-e', '--egl',  action='store_true', help='egl rendering option. use this when rendering with headless server with NVIDIA GPU')
@@ -307,4 +307,5 @@ if __name__ == '__main__':
         args.input = args.input[:-1]
     subject_name = args.input.split('/')[-1]
     print(args.out_dir, args.input, subject_name)
-    render_prt_ortho(args.out_dir, args.input, subject_name, shs, rndr, rndr_uv, args.size, 1, 1, pitch=[0])
+    new_out_dir = os.makedirs(os.path.join(args.out_dir, subject_name), exist_ok=True)
+    render_prt_ortho(new_out_dir, args.input, subject_name, shs, rndr, rndr_uv, args.size, 1, 1, pitch=[0])
