@@ -13,7 +13,7 @@
 #		fi
 #done
 
-file_list=$(ls /hd4/renderpeople/models/prt_data)
+file_list=$(ls /hd4/renderpeople/models/imgs_data)
 
 for file in $file_list
 do
