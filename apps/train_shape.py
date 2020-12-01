@@ -132,6 +132,10 @@ def train(opt):
 
             iter_data_time = time.time()
 
+        # save loss
+        epoch_loss = np.array(error)
+        np.save(' /home/xwu/project/PIFu/net_G_loss_spoch_{}'.format(epoch), epoch_loss)
+
         # update learning rate
         lr = adjust_learning_rate(optimizerG, epoch, lr, opt.schedule, opt.gamma)
 

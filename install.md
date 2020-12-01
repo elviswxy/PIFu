@@ -25,11 +25,21 @@ All the error related to *_100k.obj files.
 
 Train model shape
 ```text
-python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 1 --num_sample_inout 10000 --batch_size 8 --name test
+python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name test
+python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name pifu_test_2 --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
 ```
 
 Train model color
 ```text
 python -m apps.train_color --dataroot /ssd2/xwu/data --num_sample_inout 0 --num_sample_color 15000 --sigma 0.1 --random_flip --random_scale --random_trans --gpu_id 2 --batch_size 12 --name test
+```
+
+```text
+calc error (test) ...
+100%|████████████████████████████████████████████████████████████████████| 100/100 [00:34<00:00,  2.91it/s]
+eval test MSE: 0.090907 IOU: 0.792757 prec: 0.897853 recall: 0.870246
+calc error (train) ...
+100%|████████████████████████████████████████████████████████████████████| 100/100 [00:33<00:00,  2.97it/s]
+eval train MSE: 0.036659 IOU: 0.903424 prec: 0.944849 recall: 0.953614
 ```
 
