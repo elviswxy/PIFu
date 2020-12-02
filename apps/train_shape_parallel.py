@@ -125,8 +125,8 @@ def train(opt):
 
             if train_idx % opt.freq_plot == 0:
                 print(
-                    'Name: {0} | Epoch: {1} | {2}/{3} | Err: {4:.06f} | LR: {5:.06f} | Sigma: {6:.02f} | dataT: {7:.05f} | netT: {8:.05f} | ETA: {9:02d}:{10:02d}'.format(
-                        opt.name, epoch, train_idx, len(train_data_loader), error.item(), lr, opt.sigma,
+                    'Name: {0} | Epoch: {1} | {2}/{3} | LR: {5:.06f} | Sigma: {6:.02f} | dataT: {7:.05f} | netT: {8:.05f} | ETA: {9:02d}:{10:02d}'.format(
+                        opt.name, epoch, train_idx, len(train_data_loader), lr, opt.sigma,
                                                                             iter_start_time - iter_data_time,
                                                                             iter_net_time - iter_start_time, int(eta // 60),
                         int(eta - 60 * (eta // 60))))
