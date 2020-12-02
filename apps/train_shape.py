@@ -53,7 +53,7 @@ def train(opt):
     netG = HGPIFuNet(opt, projection_mode)
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
-        netG = nn.DataParallel(netG)
+        netG = nn.DataParallel(netG, device_ids=[5,6])
 
     netG = netG.to(device=cuda)
     # netG = netG.cuda()
