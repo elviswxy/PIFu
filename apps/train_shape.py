@@ -30,7 +30,7 @@ def train(opt):
     # set cuda
     # cuda = torch.device('cuda:%d' % opt.gpu_id)
     # gpus = [5,6]
-    cuda = torch.device('cuda')
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
