@@ -58,7 +58,7 @@ def train(opt):
     netG = netG.to(device=cuda)
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
     lr = opt.learning_rate
-    print('Using Network: ', netG.name)
+    # print('Using Network: ', netG.name)
     print('Using Network: ')
     
     def set_train():
