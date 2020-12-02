@@ -28,7 +28,7 @@ opt = BaseOptions().parse()
 def train(opt):
     # set cuda
     # cuda = torch.device('cuda:%d' % opt.gpu_id)
-    cuda = torch.device("cuda:5,6" if torch.cuda.is_available() else "cpu")
+    cuda = torch.device("cuda:6,7" if torch.cuda.is_available() else "cpu")
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
@@ -55,7 +55,7 @@ def train(opt):
     #     netG = nn.DataParallel(netG, device_ids=[5,6])
     #
     # netG = netG.to(device=cuda)
-    netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[5, 6]).to(device=cuda)
+    netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[6, 7]).to(device=cuda)
     # netG = HGPIFuNet(opt, projection_mode).to(device=cuda)
     # netG = netG.cuda()
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
