@@ -27,9 +27,9 @@ opt = BaseOptions().parse()
 
 def train(opt):
     # set cuda
-    # cuda = torch.device('cuda:%d' % opt.gpu_id)
+    cuda = torch.device('cuda:%d' % opt.gpu_id)
     # gpus = [5,6]
-    cuda = torch.device("cuda:5,6" if torch.cuda.is_available() else "cpu")
+    # cuda = torch.device("cuda:5,6" if torch.cuda.is_available() else "cpu")
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
@@ -50,17 +50,19 @@ def train(opt):
     print('test data size: ', len(test_data_loader))
 
     # create net
-    netG = HGPIFuNet(opt, projection_mode)
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        netG = nn.DataParallel(netG, device_ids=[5,6])
-
-    netG = netG.to(device=cuda)
+    # netG = HGPIFuNet(opt, projection_mode)
+    # if torch.cuda.device_count() > 1:
+    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
+    #     netG = nn.DataParallel(netG, device_ids=[5,6])
+    #
+    # netG = netG.to(device=cuda)
+    # netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[5, 6]).to(device=cuda)
+    netG = HGPIFuNet(opt, projection_mode).to(device=cuda)
     # netG = netG.cuda()
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
     lr = opt.learning_rate
-    # print('Using Network: ', netG.name)
-    print('Using Network: ')
+    print('Using Network: ', netG.name)
+    # print('Using Network: ')
     
     def set_train():
         netG.train()
@@ -131,10 +133,10 @@ def train(opt):
                         int(eta - 60 * (eta // 60))))
 
             if train_idx % opt.freq_save == 0 and train_idx != 0:
-                # torch.save(netG.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
-                # torch.save(netG.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
-                torch.save(netG.module.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
-                torch.save(netG.module.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
+                torch.save(netG.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
+                torch.save(netG.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
+                # torch.save(netG.module.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
+                # torch.save(netG.module.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
 
             if train_idx % opt.freq_save_ply == 0:
                 save_path = '%s/%s/pred.ply' % (opt.results_path, opt.name)
