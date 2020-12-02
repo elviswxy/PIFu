@@ -1,5 +1,6 @@
 import sys
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '5,6'
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,8 +29,8 @@ opt = BaseOptions().parse()
 def train(opt):
     # set cuda
     # cuda = torch.device('cuda:%d' % opt.gpu_id)
-    gpus = [5,6]
-    cuda = torch.cuda.set_device('cuda:{}'.format(gpus[0]))
+    # gpus = [5,6]
+    cuda = torch.device('cuda')
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
@@ -56,6 +57,7 @@ def train(opt):
         netG = nn.DataParallel(netG)
 
     netG = netG.to(device=cuda)
+    # netG = netG.cuda()
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
     lr = opt.learning_rate
     # print('Using Network: ', netG.name)
@@ -70,7 +72,7 @@ def train(opt):
     # load checkpoints
     if opt.load_netG_checkpoint_path is not None:
         print('loading for net G ...', opt.load_netG_checkpoint_path)
-        netG.load_state_dict(torch.load(opt.load_netG_checkpoint_path, map_location=cuda))
+        # netG.load_state_dict(torch.load(opt.load_netG_checkpoint_path, map_location=cuda))
 
     if opt.continue_train:
         if opt.resume_epoch < 0:
@@ -78,7 +80,7 @@ def train(opt):
         else:
             model_path = '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, opt.resume_epoch)
         print('Resuming from ', model_path)
-        netG.load_state_dict(torch.load(model_path, map_location=cuda))
+        # netG.load_state_dict(torch.load(model_path, map_location=cuda))
 
     os.makedirs(opt.checkpoints_path, exist_ok=True)
     os.makedirs(opt.results_path, exist_ok=True)
