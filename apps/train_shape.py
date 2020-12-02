@@ -12,6 +12,7 @@ import random
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import torch.nn as nn
 
 from lib.options import BaseOptions
 from lib.mesh_util import *
@@ -26,7 +27,9 @@ opt = BaseOptions().parse()
 
 def train(opt):
     # set cuda
-    cuda = torch.device('cuda:%d' % opt.gpu_id)
+    # cuda = torch.device('cuda:%d' % opt.gpu_id)
+    gpus = [5,6]
+    cuda = torch.cuda.set_device('cuda:{}'.format(gpus[0]))
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
@@ -47,7 +50,12 @@ def train(opt):
     print('test data size: ', len(test_data_loader))
 
     # create net
-    netG = HGPIFuNet(opt, projection_mode).to(device=cuda)
+    netG = HGPIFuNet(opt, projection_mode)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        netG = nn.DataParallel(netG)
+
+    netG = netG.to(device=cuda)
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
     lr = opt.learning_rate
     print('Using Network: ', netG.name)
@@ -121,8 +129,10 @@ def train(opt):
                         int(eta - 60 * (eta // 60))))
 
             if train_idx % opt.freq_save == 0 and train_idx != 0:
-                torch.save(netG.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
-                torch.save(netG.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
+                # torch.save(netG.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
+                # torch.save(netG.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
+                torch.save(netG.module.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
+                torch.save(netG.module.state_dict(), '%s/%s/netG_epoch_%d' % (opt.checkpoints_path, opt.name, epoch))
 
             if train_idx % opt.freq_save_ply == 0:
                 save_path = '%s/%s/pred.ply' % (opt.results_path, opt.name)
@@ -133,11 +143,12 @@ def train(opt):
             iter_data_time = time.time()
 
         # save loss
-        epoch_loss = np.array(error)
-        np.save(' /home/xwu/project/PIFu/net_G_loss_spoch_{}'.format(epoch), epoch_loss)
+        # epoch_loss = np.array(error)
+        # np.save(' /home/xwu/project/PIFu/net_G_loss_spoch_{}'.format(epoch), epoch_loss)
 
         # update learning rate
         lr = adjust_learning_rate(optimizerG, epoch, lr, opt.schedule, opt.gamma)
+        print("learning rate: {}".format(lr))
 
         #### test
         with torch.no_grad():

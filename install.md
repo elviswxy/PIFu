@@ -27,6 +27,8 @@ Train model shape
 ```text
 python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name test
 python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name pifu_test_2 --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
+python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 64 --name pifu_test_2 --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
+
 ```
 
 Train model color
