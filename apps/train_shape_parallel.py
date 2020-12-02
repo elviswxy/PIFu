@@ -28,7 +28,7 @@ opt = BaseOptions().parse()
 def train(opt):
     # set cuda
     # cuda = torch.device('cuda:%d' % opt.gpu_id)
-    cuda = torch.device("cuda:6,7" if torch.cuda.is_available() else "cpu")
+    cuda = torch.device("cuda:2,3,6,7" if torch.cuda.is_available() else "cpu")
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
@@ -55,7 +55,7 @@ def train(opt):
     #     netG = nn.DataParallel(netG, device_ids=[5,6])
     #
     # netG = netG.to(device=cuda)
-    netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[6, 7]).to(device=cuda)
+    netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[2, 3, 6, 7]).to(device=cuda)
     # netG = HGPIFuNet(opt, projection_mode).to(device=cuda)
     # netG = netG.cuda()
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
@@ -125,8 +125,8 @@ def train(opt):
 
             if train_idx % opt.freq_plot == 0:
                 print(
-                    'Name: {0} | Epoch: {1} | {2}/{3} | Err: {4} | LR: {5:.06f} | Sigma: {6:.02f} | dataT: {7:.05f} | netT: {8:.05f} | ETA: {9:02d}:{10:02d}'.format(
-                        opt.name, epoch, train_idx, len(train_data_loader), error.data, lr, opt.sigma,
+                    'Name: {0} | Epoch: {1} | {2}/{3} | Err: {4:.06f} | LR: {5:.06f} | Sigma: {6:.02f} | dataT: {7:.05f} | netT: {8:.05f} | ETA: {9:02d}:{10:02d}'.format(
+                        opt.name, epoch, train_idx, len(train_data_loader), error.sum().data, lr, opt.sigma,
                                                                             iter_start_time - iter_data_time,
                                                                             iter_net_time - iter_start_time, int(eta // 60),
                         int(eta - 60 * (eta // 60))))
