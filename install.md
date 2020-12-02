@@ -28,8 +28,10 @@ Train model shape
 python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name test
 python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name pifu_test_2 --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
 python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --num_sample_inout 10000 --batch_size 64 --name pifu_para_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
-python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 5 --num_sample_inout 5000 --batch_size 64 --name pifu_multi_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G --random_multiview --num_views 3
+python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 6 --num_sample_inout 5000 --batch_size 2 --name pifu_multi_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G --num_views 3
+python -m apps.train_shape_parallel --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --num_sample_inout 5000 --batch_size 14 --name pifu_para_test
 
+python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 6 --num_sample_inout 5000 --batch_size 2 --name pifu_3_view_test --num_views 3
 ```
 
 Train model color
