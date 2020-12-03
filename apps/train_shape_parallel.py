@@ -28,7 +28,7 @@ opt = BaseOptions().parse()
 def train(opt):
     # set cuda
     # cuda = torch.device('cuda:%d' % opt.gpu_id)
-    cuda = torch.device("cuda:2,3,6,7" if torch.cuda.is_available() else "cpu")
+    cuda = torch.device("cuda:4,5,6,7" if torch.cuda.is_available() else "cpu")
 
     train_dataset = TrainDataset(opt, phase='train')
     test_dataset = TrainDataset(opt, phase='test')
@@ -55,7 +55,7 @@ def train(opt):
     #     netG = nn.DataParallel(netG, device_ids=[5,6])
     #
     # netG = netG.to(device=cuda)
-    netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[2, 3, 6, 7]).to(device=cuda)
+    netG = nn.DataParallel(HGPIFuNet(opt, projection_mode), device_ids=[4,5,6,7]).to(device=cuda)
     # netG = HGPIFuNet(opt, projection_mode).to(device=cuda)
     # netG = netG.cuda()
     optimizerG = torch.optim.RMSprop(netG.parameters(), lr=opt.learning_rate, momentum=0, weight_decay=0)
@@ -132,7 +132,7 @@ def train(opt):
                                                                             iter_start_time - iter_data_time,
                                                                             iter_net_time - iter_start_time, int(eta // 60),
                         int(eta - 60 * (eta // 60))))
-                epoch_loss.append(error.mean().data)
+                epoch_loss.append('{0:.06f}'.format(error.mean().data))
 
             if train_idx % opt.freq_save == 0 and train_idx != 0:
                 # torch.save(netG.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
