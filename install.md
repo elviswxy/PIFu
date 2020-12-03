@@ -1,4 +1,4 @@
-Process
+# Pre-Process
 
 total model: 904
 prt process: 893 generated, 11 left, `trimesh` error.
@@ -23,14 +23,23 @@ rp_sharon_posed_005
 
 All the error related to *_100k.obj files.
 
+# Re-training
 Train model shape
 ```text
 python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name test
 python -m apps.train_shape --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --gpu_id 4 --num_sample_inout 10000 --batch_size 16 --name pifu_test_2 --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
 python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --num_sample_inout 10000 --batch_size 64 --name pifu_para_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
-python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 6 --num_sample_inout 5000 --batch_size 2 --name pifu_multi_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G --num_views 3
-python -m apps.train_shape_parallel --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --num_sample_inout 5000 --batch_size 14 --name pifu_para_test
+```
 
+Train model shape by mutiple GPU(parallel)
+```text
+python -m apps.train_shape_parallel --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --num_sample_inout 5000 --batch_size 48 --name pifu_para_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
+python -m apps.train_shape_parallel --dataroot /ssd2/xwu/data --random_flip --random_scale --random_trans --num_sample_inout 5000 --batch_size 56 --name pifu_parallel --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G
+```
+
+Train model shape by multiple view
+```text
+python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 6 --num_sample_inout 5000 --batch_size 2 --name pifu_multi_test --load_netG_checkpoint_path /home/xwu/project/PIFu/checkpoints/net_G --num_views 3
 python -m apps.train_shape --dataroot /ssd2/xwu/toy_data --random_flip --random_scale --random_trans --gpu_id 6 --num_sample_inout 5000 --batch_size 2 --name pifu_3_view_test --num_views 3
 ```
 
