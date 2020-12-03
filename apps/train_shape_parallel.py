@@ -73,6 +73,7 @@ def train(opt):
     if opt.load_netG_checkpoint_path is not None:
         print('loading for net G ...', opt.load_netG_checkpoint_path)
         # netG.load_state_dict(torch.load(opt.load_netG_checkpoint_path, map_location=cuda))
+        netG.module.load_state_dict(torch.load(opt.load_netG_checkpoint_path, map_location=cuda).module.state_dict())
 
     if opt.continue_train:
         if opt.resume_epoch < 0:
@@ -94,6 +95,7 @@ def train(opt):
     # training
     start_epoch = 0 if not opt.continue_train else max(opt.resume_epoch,0)
     for epoch in range(start_epoch, opt.num_epoch):
+        epoch_loss = []
         epoch_start_time = time.time()
 
         set_train()
@@ -116,7 +118,7 @@ def train(opt):
             res, error = netG.forward(image_tensor, sample_tensor, calib_tensor, labels=label_tensor)
 
             optimizerG.zero_grad()
-            error.sum().backward()
+            error.mean().backward()
             optimizerG.step()
 
             iter_net_time = time.time()
@@ -124,14 +126,13 @@ def train(opt):
                     iter_net_time - epoch_start_time)
 
             if train_idx % opt.freq_plot == 0:
-                print(error.data)
                 print(
                     'Name: {0} | Epoch: {1} | {2}/{3} | Err: {4:.06f} | LR: {5:.06f} | Sigma: {6:.02f} | dataT: {7:.05f} | netT: {8:.05f} | ETA: {9:02d}:{10:02d}'.format(
-                        opt.name, epoch, train_idx, len(train_data_loader), error.sum().data, lr, opt.sigma,
+                        opt.name, epoch, train_idx, len(train_data_loader), error.mean().data, lr, opt.sigma,
                                                                             iter_start_time - iter_data_time,
                                                                             iter_net_time - iter_start_time, int(eta // 60),
                         int(eta - 60 * (eta // 60))))
-                # print('Name: {0} | Epoch: {1} | {2}/{3} '.format(opt.name, epoch, train_idx, len(train_data_loader)))
+                epoch_loss.append(error.mean().data)
 
             if train_idx % opt.freq_save == 0 and train_idx != 0:
                 # torch.save(netG.state_dict(), '%s/%s/netG_latest' % (opt.checkpoints_path, opt.name))
@@ -148,8 +149,7 @@ def train(opt):
             iter_data_time = time.time()
 
         # save loss
-        # epoch_loss = np.array(error)
-        # np.save(' /home/xwu/project/PIFu/net_G_loss_spoch_{}'.format(epoch), epoch_loss)
+        np.save('/home/xwu/project/PIFu/net_G_loss_spoch_{}'.format(epoch), np.array(epoch_loss))
 
         # update learning rate
         lr = adjust_learning_rate(optimizerG, epoch, lr, opt.schedule, opt.gamma)
@@ -181,22 +181,22 @@ def train(opt):
                 test_losses['prec(train)'] = prec
                 test_losses['recall(train)'] = recall
 
-            if not opt.no_gen_mesh:
-                print('generate mesh (test) ...')
-                for gen_idx in tqdm(range(opt.num_gen_mesh_test)):
-                    test_data = random.choice(test_dataset)
-                    save_path = '%s/%s/test_eval_epoch%d_%s.obj' % (
-                        opt.results_path, opt.name, epoch, test_data['name'])
-                    gen_mesh(opt, netG, cuda, test_data, save_path)
-
-                print('generate mesh (train) ...')
-                train_dataset.is_train = False
-                for gen_idx in tqdm(range(opt.num_gen_mesh_test)):
-                    train_data = random.choice(train_dataset)
-                    save_path = '%s/%s/train_eval_epoch%d_%s.obj' % (
-                        opt.results_path, opt.name, epoch, train_data['name'])
-                    gen_mesh(opt, netG, cuda, train_data, save_path)
-                train_dataset.is_train = True
+            # if not opt.no_gen_mesh:
+            #     print('generate mesh (test) ...')
+            #     for gen_idx in tqdm(range(opt.num_gen_mesh_test)):
+            #         test_data = random.choice(test_dataset)
+            #         save_path = '%s/%s/test_eval_epoch%d_%s.obj' % (
+            #             opt.results_path, opt.name, epoch, test_data['name'])
+            #         gen_mesh(opt, netG, cuda, test_data, save_path)
+            #
+            #     print('generate mesh (train) ...')
+            #     train_dataset.is_train = False
+            #     for gen_idx in tqdm(range(opt.num_gen_mesh_test)):
+            #         train_data = random.choice(train_dataset)
+            #         save_path = '%s/%s/train_eval_epoch%d_%s.obj' % (
+            #             opt.results_path, opt.name, epoch, train_data['name'])
+            #         gen_mesh(opt, netG, cuda, train_data, save_path)
+            #     train_dataset.is_train = True
 
 
 if __name__ == '__main__':
